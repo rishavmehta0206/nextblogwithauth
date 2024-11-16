@@ -5,9 +5,10 @@ import { NextResponse } from "next/server";
 export const GET = async () => {
     try {
        await connectToDB();
-       let posts = await Post.find();
+       const posts = await Post.find();
        return NextResponse.json(posts)
     } catch (error) {
+        console.log(error)
         throw new Error("Failed to fetch the posts.");
     }
 }
