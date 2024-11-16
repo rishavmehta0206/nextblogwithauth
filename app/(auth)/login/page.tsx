@@ -20,7 +20,7 @@ function Login() {
           <button>Login with credentials</button>
           {state?.error}
           <Link href="/register">
-            Don't have an account? <b>Register</b>
+            Don&#39;t have an account? <b>Register</b>
           </Link>
         </form>
       </div>

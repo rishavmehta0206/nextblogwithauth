@@ -20,9 +20,9 @@ const Blogs = async () => {
   // const posts = await getData();
   return (
     <div className={styles.container}>
-      {posts?.map((post) => {
+      {posts?.map((post,index) => {
         return (
-          <div className={styles.post}>
+          <div key={index} className={styles.post}>
             <PostCard post={post} />
           </div>
         );

@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-const getSingleData = async(blogId) => {
-  let response = await fetch(`http://localhost:3000/api/blogs/${blogId}`,{next:{
+const getSingleData = async(blogId:string) => {
+  const response = await fetch(`http://localhost:3000/api/blogs/${blogId}`,{next:{
     revalidate:3600
   }})
   return response.json();
@@ -38,7 +38,7 @@ const Blog = async ({ params }: Props) => {
   const { blogId } = params;
  
   // let blog = await getPost(blogId);
-  let blog = await getSingleData(blogId);
+  const blog = await getSingleData(blogId);
   return (
     <div className={styles.container}>
       <div className={styles.imgContainer}>

@@ -45,13 +45,14 @@ export const {
           const user = await login(credentials);
           return user;
         } catch (err) {
+          console.log(err)
           return null;
         }
       },
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ account, profile }) {
       if (account.provider === "github") {
         connectToDB();
         try {

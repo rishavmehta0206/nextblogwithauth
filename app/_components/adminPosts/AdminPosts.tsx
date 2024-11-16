@@ -1,6 +1,4 @@
 
-
-
 import React from "react";
 import styles from "./admin.module.css";
 import { getPosts } from "@/lib/data";
@@ -8,13 +6,13 @@ import Image from "next/image";
 import { deletePost } from "@/lib/actions";
 
 export default async function AdminPosts() {
-  let posts = await getPosts();
+  const posts = await getPosts();
   return (
     <div>
       <h1>Posts</h1>
-      {posts?.map((post) => {
+      {posts?.map((post,index) => {
         return (
-          <div className={styles.post}>
+          <div key={index} className={styles.post}>
             <div className={styles.detail}>
               <Image
                 src={post.img || "/noAvatar.png"}

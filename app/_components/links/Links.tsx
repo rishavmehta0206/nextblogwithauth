@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import styles from "./links.module.css";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { signOut } from "@/lib/auth";
 import { handleLogout } from "@/lib/actions";
 
 const routes = [
@@ -35,8 +34,9 @@ const Links = ({session}) => {
   return (
     <div className={styles.container}>
       <div className={styles.links}>
-        {routes?.map((route) => (
+        {routes?.map((route,index) => (
           <div
+          key={index}
             className={`${styles.container} ${
               pathName === route.path && styles.active
             }`}
@@ -61,7 +61,7 @@ const Links = ({session}) => {
           zIndex:'999'
         }} className={styles.mobileLinks}>
             {
-                routes?.map(route => <div className={`${styles.container} ${
+                routes?.map(route => <div key={route.path} className={`${styles.container} ${
                   pathName === route.path && styles.active
                 }`}><Link key={route.path} href={route.path}>{route.title}</Link></div>)
             }

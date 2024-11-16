@@ -12,8 +12,11 @@ function Register() {
   const router = useRouter();
 
   useEffect(() => {
-    state?.success && router.push("/login");
-  }, [state?.success,router]);
+    if (state?.success) {
+      router.push("/login");
+    }
+  }, [state?.success, router]);
+  
 
 
   return (
