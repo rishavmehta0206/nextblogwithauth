@@ -4,25 +4,43 @@ import { signIn, signOut } from "./auth";
 import { Post, User } from "./model";
 import bcrypt from "bcrypt";
 import { connectToDB } from "./utils";
-// Remove unused import
-// import { authConfig } from "./auth.config";
 import { revalidatePath } from "next/cache";
 
-export const addPost = async (prevState: any, formData: FormData) => {
-  const { title, desc, userId, img } = Object.fromEntries(formData);
+// Define interfaces for our state and form data
+interface FormState {
+  error?: string;
+  success?: boolean;
+}
+
+interface PostFormData {
+  title: string;
+  desc: string;
+  userId: string;
+  img: string;
+}
+
+interface UserFormData {
+  username: string;
+  email: string;
+  password: string;
+  img: string;
+  passwordRepeat?: string;
+}
+
+export const addPost = async (prevState: FormState, formData: FormData) => {
+  const data = Object.fromEntries(formData) as unknown as PostFormData;
   try {
     await connectToDB();
-    // Use const since it's not reassigned
     const newPost = await Post.create({
-      title,
-      desc,
-      userId,
-      img,
+      title: data.title,
+      desc: data.desc,
+      userId: data.userId,
+      img: data.img,
     });
-    console.log('Post created:', newPost); // Use the newPost value
+    console.log('Post created:', newPost);
     revalidatePath("/blog");
     revalidatePath("/admin");
-  } catch (err) { // Rename error to err since it's used
+  } catch (err) {
     console.log(err);
     return { error: "Something went wrong!" };
   }
@@ -34,27 +52,27 @@ export const deletePost = async (id: string) => {
     await Post.findByIdAndDelete(id);
     revalidatePath("/blog");
     revalidatePath("/admin");
-  } catch (err) { // Rename error to err
+  } catch (err) {
     console.log(err);
     return { error: "Something went wrong!" };
   }
 };
 
-export const addUser = async (prevState: any, formData: FormData) => {
-  const { username, email, password, img } = Object.fromEntries(formData);
+export const addUser = async (prevState: FormState, formData: FormData) => {
+  const data = Object.fromEntries(formData) as unknown as UserFormData;
   try {
     await connectToDB();
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(data.password, salt);
     const newUser = await User.create({
-      username,
-      email,
+      username: data.username,
+      email: data.email,
       password: hashedPassword,
-      img,
+      img: data.img,
     });
-    console.log('User created:', newUser); // Use the newUser value
+    console.log('User created:', newUser);
     revalidatePath("/admin");
-  } catch (err) { // Rename error to err
+  } catch (err) {
     console.log(err);
     return { error: "Something went wrong!" };
   }
@@ -66,35 +84,34 @@ export const deleteUser = async (id: string) => {
     await Post.deleteMany({ userId: id });
     await User.findByIdAndDelete(id);
     revalidatePath("/admin");
-  } catch (err) { // Rename error to err
+  } catch (err) {
     console.log(err);
     return { error: "Something went wrong!" };
   }
 };
 
-export const register = async (previousState: any, formData: FormData) => {
-  const { username, email, password, img, passwordRepeat } =
-    Object.fromEntries(formData);
+export const register = async (previousState: FormState, formData: FormData) => {
+  const data = Object.fromEntries(formData) as unknown as UserFormData;
 
-  if (password !== passwordRepeat) {
+  if (data.password !== data.passwordRepeat) {
     return { error: "Passwords do not match" };
   }
 
   try {
     await connectToDB();
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username: data.username });
 
     if (user) {
       return { error: "Username already exists" };
     }
 
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(data.password, salt);
     const newUser = new User({
-      username,
-      email,
+      username: data.username,
+      email: data.email,
       password: hashedPassword,
-      img,
+      img: data.img,
     });
 
     await newUser.save();
@@ -107,15 +124,15 @@ export const register = async (previousState: any, formData: FormData) => {
   }
 };
 
-export const login = async (prevState: any, formData: FormData) => {
-  const { username, password } = Object.fromEntries(formData);
+export const login = async (prevState: FormState, formData: FormData) => {
+  const data = Object.fromEntries(formData) as unknown as Pick<UserFormData, 'username' | 'password'>;
 
   try {
-    await signIn("credentials", { username, password });
+    await signIn("credentials", { username: data.username, password: data.password });
   } catch (err) {
     console.log(err);
 
-    if (err.message.includes("CredentialsSignin")) {
+    if (err instanceof Error && err.message.includes("CredentialsSignin")) {
       return { error: "Invalid username or password" };
     }
     throw err;
