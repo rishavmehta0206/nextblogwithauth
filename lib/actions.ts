@@ -25,14 +25,13 @@ export const addPost = async (prevState, formData) => {
   }
 };
 
-export const deletePost = async (id) => {
+export const deletePost = async (id:string) => {
   try {
     await connectToDB();
     await Post.findByIdAndDelete(id);
     revalidatePath("/blog");
     revalidatePath("/admin");
   } catch (error) {
-    console.log(err);
     return { error: "Something went wrong!" };
   }
 };
@@ -57,14 +56,13 @@ export const addUser = async (prevState, formData) => {
   }
 };
 
-export const deleteUser = async (id) => {
+export const deleteUser = async (id:string) => {
   try {
     await connectToDB();
     await Post.deleteMany({ userId: id });
     await User.findByIdAndDelete(id);
     revalidatePath("/admin");
   } catch (error) {
-    console.log(err);
     return { error: "Something went wrong!" };
   }
 };
@@ -78,7 +76,7 @@ export const register = async (previousState, formData) => {
   }
 
   try {
-    connectToDb();
+    await connectToDB();
 
     const user = await User.findOne({ username });
 

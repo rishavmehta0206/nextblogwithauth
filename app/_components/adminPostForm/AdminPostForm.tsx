@@ -4,7 +4,7 @@ import { addPost } from "@/lib/actions";
 import styles from "./adminPostForm.module.css";
 import { useActionState } from "react";
 
-const AdminPostForm = ({userId}) => {
+const AdminPostForm = ({userId}:{userId:string}) => {
   const [state, formAction] = useActionState(addPost, undefined);
   
   return (

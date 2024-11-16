@@ -17,7 +17,7 @@ const Admin = async() => {
         </div>
         <div className={styles.col}>
           <Suspense fallback={<>Loading...</>}>
-            <AdminPostForm userId={session?.user.id} />
+            <AdminPostForm userId={session?.user?.id || ''} />
           </Suspense>
         </div>
       </div>
@@ -29,7 +29,7 @@ const Admin = async() => {
         </div>
         <div className={styles.col}>
           <Suspense fallback={<>Loading...</>}>
-            <AdminUserForm userId={session?.user.id}/>
+            <AdminUserForm />
           </Suspense>
         </div>
       </div>
